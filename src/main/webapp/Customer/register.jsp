@@ -34,6 +34,7 @@
              String firstname = request.getParameter("firstname");
              String lastname = request.getParameter("lastname");
              String pass = request.getParameter("pass");
+             String conpass = request.getParameter("conpass");
              String email = request.getParameter("email");
              String error = null;
              boolean success = false;
@@ -59,6 +60,10 @@
                  	error = "Email must be less than or equal to 150 characters.";
                  	connect = false;
                  }
+                 if (!pass.equals(conpass)) {
+                  	error = "Password does not match.";
+                  	connect = false;
+                  }
  
                  	if (connect) {	
                     try {
@@ -125,7 +130,7 @@
                     <input type="text" name="lastname" placeholder="Last Name" required/>
                     <input type="email" name="email" placeholder="Email" required/>
                     <input type="password" name="pass" placeholder="Password" required/>
-                    <input type="password" placeholder="Confirm Password" required/>
+                    <input type="password" name="conpass" placeholder="Confirm Password" required/>
                     <button id="custreg" type="submit">Register</button>
                 </form>
                 </div>
