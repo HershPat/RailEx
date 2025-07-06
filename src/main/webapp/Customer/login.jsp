@@ -55,13 +55,13 @@
                             ApplicationDB appdb = new ApplicationDB();
                             Connection conn = appdb.getConnection();
                             
-                            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Customer WHERE username = ?");
+                            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Customer WHERE user = ?");
                             ps.setString(1, username);
                             ResultSet rs = ps.executeQuery();
                             if(!rs.next()){
                             	error = "Invalid Username!";
                             	} else {
-	                            	 ps = conn.prepareStatement("SELECT * FROM Customer WHERE username = ? AND password = ?");
+	                            	 ps = conn.prepareStatement("SELECT * FROM Customer WHERE user = ? AND pass = ?");
 	                            	 ps.setString(1, username);
 	                            	 ps.setString(2, pass);
 	                                 rs = ps.executeQuery();

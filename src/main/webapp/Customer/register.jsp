@@ -70,7 +70,7 @@
                         ApplicationDB appdb = new ApplicationDB();
                         Connection conn = appdb.getConnection();
 
-                        PreparedStatement ps = conn.prepareStatement("SELECT * FROM Customer WHERE username = ?");
+                        PreparedStatement ps = conn.prepareStatement("SELECT * FROM Customer WHERE user = ?");
                         ps.setString(1, username);
                         ResultSet rs = ps.executeQuery();
                         if (rs.next()) {
@@ -91,7 +91,7 @@
                         }
                         
                         if (error == null) {
-                            ps = conn.prepareStatement("INSERT INTO Customer (username, firstName, lastName, email, password)" + 
+                            ps = conn.prepareStatement("INSERT INTO Customer (user, firstName, lastName, email, pass)" + 
                         								"VALUES (?, ?, ?, ?, ?)");
                             ps.setString(1, username);
                             ps.setString(2, firstname);
