@@ -40,6 +40,15 @@
   margin: 0;
 }
 
+.top-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.top-right > p {
+  padding: 10px;
+}
+
 #logout {
   font-family: 'Roboto', sans-serif;
   padding: 8px 16px;
@@ -57,9 +66,11 @@
   background-color: #43a047;
 }
 .dashboard-container {
+  position: absolute;
   text-align: center;
-  margin-top: 100px;
-}
+  top: 190px;
+  left: 35%;
+  }
     </style>
 </head>
 <body>
@@ -78,20 +89,27 @@
 	    response.sendRedirect("login.jsp?logout=true");
 	}
 		%>
-    <div>
-        <header class="site-header">
-            <h1>RailEx</h1>
-            <div>
-            	<form method="post">
-            	<button id="logout" name="log" type="submit">Log Out</button>
-            	</form>
-            </div>
-            
-        </header>
-    </div>
-    <div class="dashboard-container">
-        <h2><%=username %>, Welcome to RailEx Dashboard!</h2>
-        <p>Manage your railway bookings and operations efficiently.</p>
+	<div>	
+	    <div>
+	         <header class="site-header">
+	            <h1>RailEx</h1>
+	            <div class="top-right">
+	            	<p>Welcome <%=username %></p>
+		            <form method="post">
+		            		<button id="logout" name="log" type="submit">Log Out</button>
+	            	</form>
+	            </div>
+	        </header>
+	    	</div>
+    	<div class="dashboard-container">
+        	<p>Book Reservation:</p>
+        	<form method="post">
+		       <input type="text" name="origin" placeholder="origin"/>
+		       <input type="text" name="destination" placeholder="destination"/>
+		       <input type="date" name="date">
+		       <button name="search" type="submit">Search</button>
+	        </form>
+		</div>
 	</div>
 </body>
 </html>

@@ -41,6 +41,14 @@
         .site-header {
         margin: 0;
         }
+        .top-right {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+         .top-right > p {
+         padding: 10px;
+         }
 
         #logout {
         font-family: 'Roboto', sans-serif;
@@ -83,15 +91,17 @@
     <div>
         <header class="site-header">
             <h1>RailEx</h1>
-            <div>
-            	<form method="post">
-            	<button id="logout" name="log" type="submit">Log Out</button>
+            <div class="top-right">
+            	<p>Welcome <%=username %></p>
+	            <form method="post">
+	            		<button id="logout" name="log" type="submit">Log Out</button>
             	</form>
             </div>
         </header>
+        
     </div>
     <div class="dashboard-container">
-    	<h1> Welcome representative <%=username %>,</h1>
+    	<h1> Welcome Representative <%=username %>,</h1>
         <p>Manage and Update Customer's bookings.</p>
       </div>
 </body>
