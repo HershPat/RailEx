@@ -77,7 +77,7 @@
 			
 			if(request.getParameter("log") != null){
 				session.invalidate();
-			    response.sendRedirect("login.jsp?logout=true");
+			    response.sendRedirect("../login.jsp?logout=true");
 			}
 				%>
     <div>
@@ -91,7 +91,7 @@
         </header>
     </div>
     <div class="dashboard-container">
-    	<h1> Welcome <%=username %>,</h1>
+    	<h1> Welcome representative <%=username %>,</h1>
         <p>Manage and Update Customer's bookings.</p>
       </div>
 </body>

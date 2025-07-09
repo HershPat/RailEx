@@ -53,7 +53,17 @@
 		                                 	error = "Invalid Password!";
 		                            		} else {
 		                            			session.setAttribute("username", username);
-		                            			response.sendRedirect("dashboard.jsp");
+		                            			ps = conn.prepareStatement("SELECT * FROM Employee WHERE user = ? AND pass = ? AND isManager = 1");
+		                            			ps.setString(1, username);
+		                            			ps.setString(2, pass);
+		                            			rs=ps.executeQuery();
+		                            			if (!rs.next()){
+		                            				response.sendRedirect("Representative/dashboard.jsp");
+		                            			} else{
+		                            				response.sendRedirect("Admin/dashboard.jsp");
+		                            			}
+		                            			
+		                            			
 		                            		}
                             		}
                             rs.close();
