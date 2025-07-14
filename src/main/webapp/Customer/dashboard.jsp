@@ -17,7 +17,6 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding-top: 64px;
   padding-left: 20px;
   padding-right: 20px;
 }
@@ -66,10 +65,8 @@
   background-color: #43a047;
 }
 .dashboard-container {
-  position: absolute;
+  position: relative;
   text-align: center;
-  top: 190px;
-  left: 35%;
   }
     </style>
 </head>
@@ -102,11 +99,21 @@
 	        </header>
 	    	</div>
     	<div class="dashboard-container">
-        	<p>Book Reservation:</p>
-        	<form method="post">
-		       <input type="text" name="origin" placeholder="origin"/>
-		       <input type="text" name="destination" placeholder="destination"/>
-		       <input type="date" name="date">
+        	<h1>Book Reservation:</h1>
+        	<form action="checkSchedule.jsp" method="post">
+        	   <label for="origin">Origin:</label>
+		       <input type="text" name="origin" placeholder="origin" required/>
+		       <label for="destination">Destination:</label>
+		       <input type="text" name="destination" placeholder="destination" required/>
+		       <label for="date">Date:</label>
+		       <input type="date" name="date" required><br>
+		       <h3>Sort By:</h3>
+		       <label for="arrivalTime">Arrival Time</label>
+		       <input type="radio" id="arrivalTime" name="sort" value="arrivalTime" checked>
+    		   <label for="destinationTime">Departure Time</label>
+    		   <input type="radio" id="departureTime" name="sort" value="departureTime">
+    		   <label for="fare">Fare</label>
+    		   <input type="radio" id="fare" name="sort" value="fare">
 		       <button name="search" type="submit">Search</button>
 	        </form>
 		</div>

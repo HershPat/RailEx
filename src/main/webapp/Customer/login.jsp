@@ -68,7 +68,9 @@
 		                                 if(!rs.next()){
 		                                 	error = "Invalid Password!";
 		                            		} else {
+		                            			int customerid = rs.getInt("Customerid");
 		                            			session.setAttribute("username", username);
+		                            			session.setAttribute("customerid", customerid);
 		                            			response.sendRedirect("dashboard.jsp");
 		                            		}
                             		}
