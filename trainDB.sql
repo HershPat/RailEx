@@ -45,7 +45,7 @@ CREATE TABLE StopsAt (
     ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- 2.5 Customer Data (and Q&A)
+-- 2.5 Customer Data
 CREATE TABLE Customer (
   customerId INT AUTO_INCREMENT PRIMARY KEY,
   firstName VARCHAR(50) NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE Customer (
   email VARCHAR(150) NOT NULL
 );
 
--- 2.6 Employee Data (and Management)
+-- 2.6 Employee Data
 CREATE TABLE Employee (
   employeeId INT AUTO_INCREMENT PRIMARY KEY,
   SSN CHAR(11) UNIQUE,
@@ -83,7 +83,7 @@ CREATE TABLE CustomerService (
 -- 2.4 Reservation Data
 CREATE TABLE Reservation (
   reservationNumber INT AUTO_INCREMENT PRIMARY KEY,
-  reservationDate DATETIME NOT NULL,
+  reservationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   fareDiscount INT NOT NULL,
   isRound BOOLEAN NOT NULL,
   totalFare FLOAT NOT NULL,
