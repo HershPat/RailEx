@@ -1,197 +1,103 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="com.cs336.pkg.*" %>
-<%@ page import="java.sql.*, java.util.*" %>
-<%@ page import="javax.servlet.http.*, javax.servlet.*" %>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="com.cs336.pkg.*" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="javax.servlet.http.*" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservation Status</title>
   <style>
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
       font-size: 25px;
-      background: #2c2c2c;
-      color: #f1f1f1;
+      background-color: #2c2c2c;
+      color: #fff;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
       padding: 20px;
     }
-
-    .container {
-      width: 100%;
-      max-width: 800px;
-    }
-
-    h1,
-    p {
+    .message {
+      background-color: #333;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 600px;
       text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
+    .btn-group {
+      margin-top: 20px;
     }
-
-    th,
-    td {
-      border: 1px solid #555;
-      padding: 8px;
-      text-align: left;
-    }
-
-    .actions {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-    }
-
-    .btn {
-      background: #4CAF50;
-      color: #fff;
-      border: none;
+    .btn,
+    .btn.cancel {
       padding: 10px 20px;
       font-size: 20px;
+      border: none;
       border-radius: 4px;
       cursor: pointer;
       text-decoration: none;
-      text-align: center;
+      margin: 0 10px;
     }
-
-    .btn.cancel {
-      background: #f44336;
+    .btn {
+      background-color: #4CAF50;
+      color: #fff;
     }
-
+    }
     .btn:hover {
       opacity: 0.9;
     }
   </style>
-
-  <title>Confirm Reservation</title>
 </head>
-
 <body>
-  <%
-    session = request.getSession(false);
-    Integer customerId = (session != null)
-        ? (Integer) session.getAttribute("customerId")
-        : null;
+<%
+  Integer customerId = (session != null) ? (Integer) session.getAttribute("customerid") : null;
+  if (customerId == null) {
+    response.sendRedirect("login.jsp");
+    return;
+  }
 
-    if (customerId == null) {
-      response.sendRedirect("login.jsp");
-      return;
-    }
 
-    int scheduleLineId = Integer.parseInt(
-        request.getParameter("scheduleLineId")
-    );
+  int lineId = Integer.parseInt(request.getParameter("reserve"));
+  int originStopId = Integer.parseInt(request.getParameter("originStopId"));
+  int destinationStopId = Integer.parseInt(request.getParameter("destinationStopId"));
+  double fare = Double.parseDouble(request.getParameter("fare"));
+  boolean isRound = Boolean.parseBoolean(request.getParameter("isRound"));
+  int fareDiscount = Integer.parseInt(request.getParameter("fareDiscount"));
+  String passengerType = request.getParameter("passengerType");
 
-    int originStopId = Integer.parseInt(
-        request.getParameter("originStopId")
-    );
+  String message;
+  try {
+	  Connection conn = new ApplicationDB().getConnection();
+	  String sql = "INSERT INTO Reservation (ScheduleLineId, originStopId, destinationStopId, totalFare, isRound, fareDiscount, customerId) " +
+		         "VALUES ( ?, ?, ?, ?, ?, ?, ?)";
+       PreparedStatement ps = conn.prepareStatement(sql);
+    ps.setInt(1, lineId);
+    ps.setInt(2, originStopId);
+    ps.setInt(3, destinationStopId);
+    ps.setDouble(4, fare);
+    ps.setBoolean(5, isRound);
+    ps.setInt(6, fareDiscount);
+    ps.setInt(7, customerId);
 
-    int destinationStopId = Integer.parseInt(
-        request.getParameter("destinationStopId")
-    );
+    int count = ps.executeUpdate();
+    ps.close();
+    conn.close();
+    message = (count > 0) ? "Your reservation was created successfully!" : "Reservation failed. Please try again.";
+    
+  } catch (SQLException e) {
+    e.printStackTrace();
+    message = "Error: " + e.getMessage();
+  }
 
-    float totalFare = Float.parseFloat(
-        request.getParameter("totalFare")
-    );
 
-    int fareDiscount = (request.getParameter("fareDiscount") != null)
-        ? Integer.parseInt(request.getParameter("fareDiscount"))
-        : 0;
-
-    boolean isRound = "true".equals(
-        request.getParameter("isRound")
-    );
-
-    List<Map<String, Object>> stops = new ArrayList<>();
-    Connection conn = null;
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-
-    try {
-      ApplicationDB appdb = new ApplicationDB();
-      conn = appdb.getConnection();
-
-      String stopSql =
-          "SELECT s.stationName, sa.stopDepartureTime, sa.stopArrivalTime " +
-          "FROM stopsat sa " +
-          "JOIN station s ON sa.stopStation = s.stationId " +
-          "WHERE sa.stopLine = ? " +
-          "ORDER BY sa.stopIndex";
-
-      ps = conn.prepareStatement(stopSql);
-      ps.setInt(1, scheduleLineId);
-      rs = ps.executeQuery();
-
-      while (rs.next()) {
-        Map<String, Object> m = new HashMap<>();
-        m.put("name", rs.getString("stationName"));
-        m.put("depart", rs.getTimestamp("stopDepartureTime"));
-        m.put("arrive", rs.getTimestamp("stopArrivalTime"));
-        stops.add(m);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    } finally {
-      if (rs != null) try { rs.close(); } catch (Exception ignore) {}
-      if (ps != null) try { ps.close(); } catch (Exception ignore) {}
-      if (conn != null) try { conn.close(); } catch (Exception ignore) {}
-    }
-  %>
-
-  <div class="container">
-    <h1>Confirm Your Reservation</h1>
-
-    <p>
-      Customer ID: <%= customerId %><br>
-      Line ID: <%= scheduleLineId %><br>
-      Origin Stop: <%= originStopId %> → Destination Stop: <%= destinationStopId %>
-    </p>
-
-    <p>
-      Total Fare: $<%= String.format("%.2f", totalFare) %><br>
-      Discount: <%= fareDiscount %>%<br>
-      Round Trip: <%= isRound ? "Yes" : "No" %>
-    </p>
-
-    <h2>Stops on This Route</h2>
-    <table>
-      <tr>
-        <th>Station</th>
-        <th>Departure</th>
-        <th>Arrival</th>
-      </tr>
-      <% for (Map<String, Object> stop : stops) { %>
-      <tr>
-        <td><%= stop.get("name") %></td>
-        <td><%= stop.get("depart") %></td>
-        <td><%= stop.get("arrive") %></td>
-      </tr>
-      <% } %>
-    </table>
-
-    <div class="actions">
-      <form action="createReservation.jsp" method="post">
-        <input type="hidden" name="scheduleLineId" value="<%= scheduleLineId %>">
-        <input type="hidden" name="originStopId" value="<%= originStopId %>">
-        <input type="hidden" name="destinationStopId" value="<%= destinationStopId %>">
-        <input type="hidden" name="totalFare" value="<%= totalFare %>">
-        <input type="hidden" name="fareDiscount" value="<%= fareDiscount %>">
-        <input type="hidden" name="isRound" value="<%= isRound %>">
-
-        <button type="submit" class="btn">Confirm</button>
-      </form>
-
-      <a href="dashboard.jsp" class="btn cancel">Cancel</a>
-    </div>
+%>
+<div class="message">
+  <h1><%= message %></h1>
+  <div class="btn-group">
+    <a href="dashboard.jsp" class="btn">Dashboard</a>
   </div>
+</div>
 </body>
 </html>
