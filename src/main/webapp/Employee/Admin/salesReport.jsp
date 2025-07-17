@@ -1,19 +1,16 @@
 <%@ page language="java"
          contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"
-         import="com.cs336.pkg.ApplicationDB" %>
+         pageEncoding="UTF-8" %>
+<%@ page import="com.cs336.pkg.ApplicationDB" %>
 <%@ page import="java.sql.*" %>
-<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="javax.servlet.http.*" %>
 <%
-  // ─── Auth check ───
+  // ─── Auth & logout ───
   if (session == null || session.getAttribute("username") == null) {
     response.sendRedirect("../login.jsp");
     return;
   }
   String username = (String) session.getAttribute("username");
-
-  // ─── Handle logout ───
   if (request.getParameter("log") != null) {
     session.invalidate();
     response.sendRedirect("../login.jsp?logout=true");
@@ -25,7 +22,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>RailEx Admin Dashboard</title>
+  <title>Sales Reports</title>
   <style>
     body {
       margin: 0;
@@ -35,10 +32,11 @@
     }
     .site-header {
       background: #2c2c2c;
-      padding: 10px 20px;
+      padding: 0 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      height: 60px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.5);
       position: fixed;
       width: calc(100% - 240px);
@@ -57,7 +55,9 @@
     .top-right p {
       margin: 0 15px 0 0;
       font-size: 1.2rem;
+      line-height: 1;
     }
+    .top-right form { margin: 0; }
     #logout {
       background: #e53935;
       border: none;
@@ -67,10 +67,10 @@
       cursor: pointer;
       color: #fff;
       transition: background .2s;
+      line-height: 1;
     }
-    #logout:hover {
-      background: #d32f2f;
-    }
+    #logout:hover { background: #d32f2f; }
+
     .navbar {
       background: #1c1c1c;
       width: 240px;
@@ -78,7 +78,7 @@
       top: 0;
       left: 0;
       height: 100vh;
-      padding-top: 80px;
+      padding-top: 60px;
       box-shadow: 2px 0 5px rgba(0,0,0,0.7);
     }
     .navbar h2 {
@@ -94,13 +94,11 @@
       text-decoration: none;
       transition: background .2s, color .2s;
     }
-    .navbar a:hover {
-      background: #333;
-      color: #fff;
-    }
+    .navbar a:hover { background: #333; color: #fff; }
+
     .dashboard-container {
       margin-left: 240px;
-      margin-top: 80px;
+      margin-top: 60px;
       padding: 20px;
       max-width: calc(100% - 260px);
     }
@@ -109,7 +107,21 @@
       font-size: 1.5rem;
       margin: 20px 0 10px;
     }
-    /* Add any additional dashboard-specific styles here */
+    .table-admin {
+      width: 100%;
+      border-collapse: collapse;
+      background: #2c2c2c;
+      margin-top: 10px;
+    }
+    .table-admin th,
+    .table-admin td {
+      padding: 10px;
+      border: 1px solid #444;
+      text-align: left;
+    }
+    .table-admin th {
+      background: #333;
+    }
   </style>
 </head>
 <body>
@@ -122,13 +134,13 @@
     <a href="salesReport.jsp">Sales Reports</a>
     <a href="reservationReport.jsp">Reservation Reports</a>
     <a href="revenueReport.jsp">Revenue Reports</a>
-    <a href="bestCustomer.jsp">Best Customer</a>            <!-- ← new -->
+    <a href="bestCustomer.jsp">Best Customer</a>
     <a href="topTransit.jsp">Top 5 Transit Lines</a>
   </div>
 
   <!-- Header -->
   <header class="site-header">
-    <h1>RailEx Admin</h1>
+    <h1>Sales Reports</h1>
     <div class="top-right">
       <p>Welcome, <%= username %></p>
       <form method="post">
@@ -139,9 +151,72 @@
 
   <!-- Main Content -->
   <div class="dashboard-container">
-    <div class="section-title">Dashboard</div>
-    <!-- Insert your dashboard widgets, stats, or links here -->
-    <p>This is the admin dashboard. Use the sidebar to navigate.</p>
+    <div class="section-title">Monthly Sales</div>
+    <table class="table-admin">
+      <tr>
+        <th>Year</th>
+        <th>Month</th>
+        <th># Reservations</th>
+        <th>Total Revenue</th>
+      </tr>
+      <%
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+          conn = new ApplicationDB().getConnection();
+          ps = conn.prepareStatement(
+            "SELECT " +
+            "  YEAR(so.stopDepartureTime)      AS yr, " +
+            "  MONTHNAME(so.stopDepartureTime) AS mo, " +
+            "  COUNT(*)                        AS totalRes, " +
+            "  SUM(r.totalFare)                AS revenue " +
+            "FROM reservation r " +
+            "JOIN stopsat so " +
+            "  ON r.originStopId = so.stopStation " +
+            "  AND so.stopLine   = r.scheduleLineId " +
+            "GROUP BY yr, MONTH(so.stopDepartureTime), mo " +
+            "ORDER BY YEAR(so.stopDepartureTime) DESC, " +
+            "         MONTH(so.stopDepartureTime) DESC"
+          );
+          rs = ps.executeQuery();
+          boolean has = false;
+          while (rs.next()) {
+            has = true;
+      %>
+      <tr>
+        <td><%= rs.getInt("yr") %></td>
+        <td><%= rs.getString("mo") %></td>
+        <td><%= rs.getInt("totalRes") %></td>
+        <td>$<%= String.format("%.2f", rs.getDouble("revenue")) %></td>
+      </tr>
+      <%
+          }
+          if (!has) {
+      %>
+      <tr>
+        <td colspan="4" style="text-align:center;color:#bbb;">
+          No sales data available.
+        </td>
+      </tr>
+      <%
+          }
+        } catch (Exception e) {
+      %>
+      <tr>
+        <td colspan="4" style="color:#e53935;text-align:center;">
+          Error loading sales: <%= e.getMessage() %>
+        </td>
+      </tr>
+      <%
+        } finally {
+          if (rs != null) try { rs.close(); } catch (Exception ignore) {}
+          if (ps != null) try { ps.close(); } catch (Exception ignore) {}
+          if (conn != null) try { conn.close(); } catch (Exception ignore) {}
+        }
+      %>
+    </table>
   </div>
+
 </body>
 </html>
