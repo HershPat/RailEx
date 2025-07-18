@@ -249,6 +249,7 @@
     </div>
 </header>
 <div class="dashboard-container">
+    <a href="faq.jsp" style="display:block;margin:24px auto 32px auto;max-width:350px;text-align:center;padding:16px 0;background:#4CAF50;color:#fff;font-size:1.2rem;border-radius:6px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.12);transition:background 0.2s;">Browse Frequently Asked Questions</a>
     <div class="section-title">Upcoming Reservations</div>
     <table class="reservation-table">
         <tr>

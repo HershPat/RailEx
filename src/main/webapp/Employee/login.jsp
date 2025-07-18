@@ -58,7 +58,16 @@
 		                            			ps.setString(2, pass);
 		                            			rs=ps.executeQuery();
 		                            			if (!rs.next()){
-		                            				response.sendRedirect("Representative/dashboard.jsp");
+		                            				// Representative login
+										// Get employeeId
+										ps = conn.prepareStatement("SELECT employeeId FROM Employee WHERE user = ?");
+										ps.setString(1, username);
+										ResultSet rs2 = ps.executeQuery();
+										if (rs2.next()) {
+											session.setAttribute("employeeId", rs2.getInt("employeeId"));
+										}
+										rs2.close();
+										response.sendRedirect("Representative/dashboard.jsp");
 		                            			} else{
 		                            				response.sendRedirect("Admin/dashboard.jsp");
 		                            			}
