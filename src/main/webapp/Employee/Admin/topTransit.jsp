@@ -70,7 +70,7 @@
   <div class="navbar">
     <h2>Admin Panel</h2>
     <a href="dashboard.jsp">Dashboard</a>
-    <a href="manageReps.jsp">Manage Representatives</a>
+    <a href="manageReps.jsp">Manage Employees</a>
     <a href="salesReport.jsp">Sales Reports</a>
     <a href="reservationReport.jsp">Reservation Reports</a>
     <a href="revenueReport.jsp">Revenue Reports</a>
@@ -103,12 +103,9 @@
         try {
           conn = new ApplicationDB().getConnection();
           ps = conn.prepareStatement(
-            "SELECT so.stopLine AS lineId, COUNT(*) AS cnt " +
-            "FROM reservation r " +
-            "  JOIN stopsat so " +
-            "    ON r.originStopId = so.stopStation " +
-            "   AND r.scheduleLineId = so.stopLine " +
-            "GROUP BY so.stopLine " +
+            "SELECT r.scheduleLineId AS lineId, COUNT(*) AS cnt " +
+            "FROM Reservation r " +
+            "GROUP BY r.scheduleLineId " +
             "ORDER BY cnt DESC " +
             "LIMIT 5"
           );

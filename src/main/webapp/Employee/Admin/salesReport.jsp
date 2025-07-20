@@ -128,7 +128,7 @@
   <div class="navbar">
     <h2>Admin Panel</h2>
     <a href="dashboard.jsp">Dashboard</a>
-    <a href="manageReps.jsp">Manage Representatives</a>
+    <a href="manageReps.jsp">Manage Employees</a>
     <a href="salesReport.jsp">Sales Reports</a>
     <a href="reservationReport.jsp">Reservation Reports</a>
     <a href="revenueReport.jsp">Revenue Reports</a>
@@ -163,17 +163,13 @@
           conn = new ApplicationDB().getConnection();
           ps = conn.prepareStatement(
             "SELECT " +
-            "  YEAR(so.stopDepartureTime)      AS yr, " +
-            "  MONTHNAME(so.stopDepartureTime) AS mo, " +
-            "  COUNT(*)                        AS totalRes, " +
-            "  SUM(r.totalFare)                AS revenue " +
-            "FROM reservation r " +
-            "JOIN stopsat so " +
-            "  ON r.originStopId = so.stopStation " +
-            "  AND so.stopLine   = r.scheduleLineId " +
-            "GROUP BY yr, MONTH(so.stopDepartureTime), mo " +
-            "ORDER BY YEAR(so.stopDepartureTime) DESC, " +
-            "         MONTH(so.stopDepartureTime) DESC"
+            "  YEAR(reservationDate) AS yr, " +
+            "  MONTHNAME(reservationDate) AS mo, " +
+            "  COUNT(*) AS totalRes, " +
+            "  SUM(totalFare) AS revenue " +
+            "FROM Reservation " +
+            "GROUP BY yr, MONTH(reservationDate), mo " +
+            "ORDER BY yr ASC, MONTH(reservationDate) ASC"
           );
           rs = ps.executeQuery();
           boolean has = false;

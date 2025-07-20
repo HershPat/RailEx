@@ -72,7 +72,7 @@
   <div class="navbar">
     <h2>Admin Panel</h2>
     <a href="dashboard.jsp">Dashboard</a>
-    <a href="manageReps.jsp">Manage Representatives</a>
+    <a href="manageReps.jsp">Manage Employees</a>
     <a href="salesReport.jsp">Sales Reports</a>
     <a href="reservationReport.jsp">Reservation Reports</a>
     <a href="revenueReport.jsp">Revenue Reports</a>

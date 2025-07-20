@@ -15,6 +15,7 @@
   String p         = request.getParameter("password");
   String firstName = request.getParameter("firstName");
   String lastName  = request.getParameter("lastName");
+  String isManager = request.getParameter("isManager");
 
   int nextId = 1;
   try (Connection c0 = new ApplicationDB().getConnection();
@@ -26,20 +27,27 @@
     e.printStackTrace();
   }
 
-  try (Connection conn = new ApplicationDB().getConnection();
-       PreparedStatement ps = conn.prepareStatement(
-         "INSERT INTO Employee(employeeId,SSN,firstName,lastName,user,pass,isManager) " +
-         "VALUES(?,?,?,?,?,?,0)"))
-  {
-    ps.setInt(1, nextId);
-    ps.setString(2, ssn);
-    ps.setString(3, firstName);
-    ps.setString(4, lastName);
-    ps.setString(5, u);
-    ps.setString(6, p);
+  Connection conn = null;
+  PreparedStatement ps = null;
+  try {
+    conn = new ApplicationDB().getConnection();
+    ps = conn.prepareStatement("INSERT INTO Employee (SSN, firstName, lastName, user, pass, isManager) VALUES (?, ?, ?, ?, ?, ?)");
+    ps.setString(1, ssn);
+    ps.setString(2, firstName);
+    ps.setString(3, lastName);
+    ps.setString(4, u);
+    ps.setString(5, p);
+    ps.setInt(6, Integer.parseInt(isManager));
     ps.executeUpdate();
-  } catch (SQLException e) {
+  } catch (Exception e) {
     e.printStackTrace();
+  } finally {
+    try {
+      if (ps != null) ps.close();
+      if (conn != null) conn.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 
   response.sendRedirect("manageReps.jsp");

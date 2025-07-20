@@ -143,17 +143,9 @@
         ResultSet rs = null;
         try {
           conn = new ApplicationDB().getConnection();
-          ps = conn.prepareStatement(
-            "SELECT DISTINCT t.lineId, t.lineName, s1.stationName as originName, s2.stationName as destName, t.departureTime, t.arrivalTime " +
-            "FROM TrainSchedule t " +
-            "JOIN Station s1 ON t.origin = s1.stationId " +
-            "JOIN Station s2 ON t.destination = s2.stationId " +
-            "WHERE s1.stationName = ? OR s2.stationName = ? " +
-            "OR t.lineId IN (SELECT DISTINCT sa.stopLine FROM stopsAt sa JOIN Station s ON sa.stopStation = s.stationId WHERE s.stationName = ?)"
-          );
+          ps = conn.prepareStatement("SELECT t.lineId, t.lineName, s1.stationName as originName, s2.stationName as destName, t.departureTime, t.arrivalTime FROM TrainSchedule t JOIN Station s1 ON t.origin = s1.stationId JOIN Station s2 ON t.destination = s2.stationId WHERE s1.stationName = ? OR s2.stationName = ?");
           ps.setString(1, station);
           ps.setString(2, station);
-          ps.setString(3, station);
           rs = ps.executeQuery();
           boolean found = false;
           while (rs.next()) {

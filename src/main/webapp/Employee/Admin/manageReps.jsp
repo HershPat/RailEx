@@ -80,7 +80,7 @@
   <div class="navbar">
     <h2>Admin Panel</h2>
     <a href="dashboard.jsp">Dashboard</a>
-    <a href="manageReps.jsp">Manage Representatives</a>
+    <a href="manageReps.jsp">Manage Employees</a>
     <a href="salesReport.jsp">Sales Reports</a>
     <a href="reservationReport.jsp">Reservation Reports</a>
     <a href="revenueReport.jsp">Revenue Reports</a>
@@ -100,14 +100,18 @@
 
   <div class="dashboard-container">
 
-    <div class="section-title">Add New Representative</div>
+    <div class="section-title">Add New Employee</div>
     <form action="addRep.jsp" method="post">
       <input class="form-control" name="ssn"       placeholder="SSN" required/>
       <input class="form-control" name="username"  placeholder="Username" required/>
       <input class="form-control" name="password"  type="password" placeholder="Password" required/>
       <input class="form-control" name="firstName" placeholder="First Name" required/>
       <input class="form-control" name="lastName"  placeholder="Last Name" required/>
-      <button class="btn btn-primary">Add Representative</button>
+      <select class="form-control" name="isManager" required>
+        <option value="1">Admin</option>
+        <option value="0">Customer Representative</option>
+      </select>
+      <button class="btn btn-primary">Add Employee</button>
     </form>
 
     <div class="section-title">Current Representatives</div>
@@ -153,6 +157,54 @@
       <tr>
         <td colspan="5" style="text-align:center;color:#bbb;">
           No representatives found.
+        </td>
+      </tr>
+      <%
+          }
+        } catch (Exception e) {
+          out.println("<tr><td colspan='5' style='color:#e53935;text-align:center;'>"
+                    + "Error: " + e.getMessage() + "</td></tr>");
+        } finally {
+          if (rs != null) try { rs.close(); } catch (Exception ignore) {}
+          if (ps != null) try { ps.close(); } catch (Exception ignore) {}
+          if (conn != null) try { conn.close(); } catch (Exception ignore) {}
+        }
+      %>
+    </table>
+
+    <div class="section-title">Current Admins</div>
+    <table class="table-admin">
+      <tr>
+        <th>ID</th><th>SSN</th><th>Username</th><th>Name</th><th>Actions</th>
+      </tr>
+      <%
+        conn = null;
+        ps = null;
+        rs = null;
+        count = 0;
+        try {
+          conn = new ApplicationDB().getConnection();
+          ps = conn.prepareStatement(
+            "SELECT employeeId, SSN, user, firstName, lastName FROM Employee WHERE isManager=1"
+          );
+          rs = ps.executeQuery();
+          while (rs.next()) {
+            count++;
+      %>
+      <tr>
+        <td><%= rs.getInt("employeeId") %></td>
+        <td><%= rs.getString("SSN") %></td>
+        <td><%= rs.getString("user") %></td>
+        <td><%= rs.getString("firstName") + " " + rs.getString("lastName") %></td>
+        <td></td>
+      </tr>
+      <%
+          }
+          if (count == 0) {
+      %>
+      <tr>
+        <td colspan="5" style="text-align:center;color:#bbb;">
+          No admins found.
         </td>
       </tr>
       <%
