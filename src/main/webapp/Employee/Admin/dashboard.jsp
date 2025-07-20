@@ -6,14 +6,12 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="javax.servlet.http.*" %>
 <%
-  // ─── Auth check ───
   if (session == null || session.getAttribute("username") == null) {
     response.sendRedirect("../login.jsp");
     return;
   }
   String username = (String) session.getAttribute("username");
 
-  // ─── Handle logout ───
   if (request.getParameter("log") != null) {
     session.invalidate();
     response.sendRedirect("../login.jsp?logout=true");
@@ -41,8 +39,8 @@
       align-items: center;
       box-shadow: 0 2px 4px rgba(0,0,0,0.5);
       position: fixed;
-      width: calc(100% - 240px);
       left: 240px;
+      right: 0;
       top: 0;
       z-index: 10;
     }
@@ -114,7 +112,6 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
   <div class="navbar">
     <h2>Admin Panel</h2>
     <a href="dashboard.jsp">Dashboard</a>
@@ -122,11 +119,10 @@
     <a href="salesReport.jsp">Sales Reports</a>
     <a href="reservationReport.jsp">Reservation Reports</a>
     <a href="revenueReport.jsp">Revenue Reports</a>
-    <a href="bestCustomer.jsp">Best Customer</a>            <!-- ← new -->
+            <a href="bestCustomer.jsp">Best Customer</a>
     <a href="topTransit.jsp">Top 5 Transit Lines</a>
   </div>
 
-  <!-- Header -->
   <header class="site-header">
     <h1>RailEx Admin</h1>
     <div class="top-right">
@@ -137,10 +133,9 @@
     </div>
   </header>
 
-  <!-- Main Content -->
   <div class="dashboard-container">
     <div class="section-title">Dashboard</div>
-    <!-- Insert your dashboard widgets, stats, or links here -->
+    
     <p>This is the admin dashboard. Use the sidebar to navigate.</p>
   </div>
 </body>

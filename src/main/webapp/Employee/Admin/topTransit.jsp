@@ -3,7 +3,6 @@
          pageEncoding="UTF-8"
          import="com.cs336.pkg.ApplicationDB,java.sql.*" %>
 <%
-  // ─── Auth & Logout ───
   if (session == null || session.getAttribute("username") == null) {
     response.sendRedirect("../login.jsp");
     return;
@@ -27,7 +26,7 @@
       background:#2c2c2c; padding:0 20px; display:flex;
       justify-content:space-between; align-items:center; height:60px;
       box-shadow:0 2px 4px rgba(0,0,0,0.5);
-      position:fixed; width:calc(100% - 240px); left:240px; top:0; z-index:10;
+      position:fixed; left:240px; right:0; top:0; z-index:10;
     }
     .site-header h1 { margin:0; font-size:2rem; }
     .top-right { display:flex; align-items:center; }
@@ -68,7 +67,6 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
   <div class="navbar">
     <h2>Admin Panel</h2>
     <a href="dashboard.jsp">Dashboard</a>
@@ -80,7 +78,6 @@
     <a href="topTransit.jsp">Top 5 Transit Lines</a>
   </div>
 
-  <!-- Header -->
   <header class="site-header">
     <h1>Top 5 Transit Lines</h1>
     <div class="top-right">
@@ -91,7 +88,6 @@
     </div>
   </header>
 
-  <!-- Main Content -->
   <div class="dashboard-container">
     <div class="section-title">Most Active Lines</div>
     <table class="table-admin">

@@ -58,8 +58,7 @@
 		                            			ps.setString(2, pass);
 		                            			rs=ps.executeQuery();
 		                            			if (!rs.next()){
-		                            				// Representative login
-										// Get employeeId
+		                            			
 										ps = conn.prepareStatement("SELECT employeeId FROM Employee WHERE user = ?");
 										ps.setString(1, username);
 										ResultSet rs2 = ps.executeQuery();

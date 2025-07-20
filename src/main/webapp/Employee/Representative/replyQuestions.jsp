@@ -7,6 +7,12 @@
   String username = (String) session.getAttribute("username");
   String method = request.getMethod();
   String message = null;
+
+  if (request.getParameter("log") != null) {
+    session.invalidate();
+    response.sendRedirect("../login.jsp?logout=true");
+    return;
+  }
   if ("POST".equalsIgnoreCase(method)) {
     String qid = request.getParameter("questionId");
     String answer = request.getParameter("answer");
@@ -67,6 +73,44 @@
     .form-control { width:100%; padding:8px; margin-bottom:10px; border:1px solid #444; border-radius:4px; background:#1f1f1f; color:#eee; }
     .btn-primary { padding:8px 12px; background:#4CAF50; color:#fff; border:none; border-radius:4px; cursor:pointer; }
     .btn-primary:hover { background:#43a047; }
+    .site-header {
+      background: #2c2c2c;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      position: fixed;
+      left: 240px;
+      right: 0;
+      top: 0;
+      z-index: 10;
+    }
+    .site-header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    .top-right {
+      display: flex;
+      align-items: center;
+    }
+    .top-right p {
+      margin: 0 15px 0 0;
+      font-size: 1.2rem;
+    }
+    #logout {
+      background: #e53935;
+      border: none;
+      padding: 8px 16px;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+      transition: background .2s;
+    }
+    #logout:hover {
+      background: #d32f2f;
+    }
   </style>
 </head>
 <body>
@@ -78,6 +122,17 @@
     <a href="stationSchedules.jsp">Schedules by Station</a>
     <a href="lineReservations.jsp">Customers by Line & Date</a>
   </div>
+
+  <header class="site-header">
+    <h1>Reply to Questions</h1>
+    <div class="top-right">
+      <p>Welcome, <%= username %></p>
+      <form method="post">
+        <button id="logout" name="log" type="submit">Log Out</button>
+      </form>
+    </div>
+  </header>
+
   <div class="dashboard-container">
     <div class="section-title">Pending Customer Questions</div>
     <% if (message != null) { %>

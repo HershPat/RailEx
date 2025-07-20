@@ -3,7 +3,6 @@
          pageEncoding="UTF-8"
          import="com.cs336.pkg.ApplicationDB,java.sql.*,javax.servlet.http.HttpSession" %>
 <%
-  // ─── Auth & Logout ───
   if (session == null || session.getAttribute("username") == null) {
     response.sendRedirect("../login.jsp");
     return;
@@ -29,7 +28,7 @@
       background:#2c2c2c; padding:0 20px; display:flex;
       justify-content:space-between; align-items:center; height:60px;
       box-shadow:0 2px 4px rgba(0,0,0,0.5);
-      position:fixed; width:calc(100% - 240px); left:240px; top:0; z-index:10;
+      position:fixed; left:240px; right:0; top:0; z-index:10;
     }
     .site-header h1 { margin:0; font-size:2rem; }
     .top-right { display:flex; align-items:center; }
@@ -93,7 +92,6 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
   <div class="navbar">
     <h2>Admin Panel</h2>
     <a href="dashboard.jsp">Dashboard</a>
@@ -105,7 +103,6 @@
     <a href="topTransit.jsp">Top 5 Transit Lines</a>
   </div>
 
-  <!-- Header -->
   <header class="site-header">
     <h1>Revenue Reports</h1>
     <div class="top-right">
@@ -116,7 +113,6 @@
     </div>
   </header>
 
-  <!-- Main Content -->
   <div class="dashboard-container">
     <div class="section-title">View Revenue</div>
     <div class="toggle-btns">
@@ -128,7 +124,6 @@
       </button>
     </div>
 
-    <!-- By Transit Line -->
     <div id="byLine">
       <table class="table-admin">
         <tr><th>Transit Line ID</th><th>Total Revenue</th></tr>
@@ -137,7 +132,7 @@
           PreparedStatement ps = null;
           ResultSet rs = null;
           try {
-            conn = new ApplicationDB().getConnection();  // instance call
+            conn = new ApplicationDB().getConnection();
             ps = conn.prepareStatement(
               "SELECT so.stopLine AS lineId, SUM(r.totalFare) AS total " +
               "FROM reservation r " +
@@ -182,13 +177,12 @@
       </table>
     </div>
 
-    <!-- By Customer Name -->
     <div id="byCust" class="hidden">
       <table class="table-admin">
         <tr><th>Customer Name</th><th>Total Revenue</th></tr>
         <%
           try {
-            conn = new ApplicationDB().getConnection();  // instance call
+            conn = new ApplicationDB().getConnection();
             ps = conn.prepareStatement(
               "SELECT CONCAT(c.firstName,' ',c.lastName) AS cust, SUM(r.totalFare) AS total " +
               "FROM reservation r " +

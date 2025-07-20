@@ -11,42 +11,55 @@
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
-      font-size: 25px;
-      background-color: #2c2c2c;
-      color: #fff;
+      background: #1a1a1a;
+      color: #eee;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 20px;
+      justify-content: center;
+      padding: 0;
     }
     .message {
-      background-color: #333;
-      padding: 30px;
-      border-radius: 8px;
-      max-width: 600px;
+      background: #232323;
+      padding: 36px 32px 32px 32px;
+      border-radius: 10px;
+      max-width: 420px;
       text-align: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      margin: 0 auto;
+    }
+    .status-success {
+      color: #43e97b;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .status-error {
+      color: #e53935;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      display: block;
     }
     .btn-group {
-      margin-top: 20px;
-    }
-    .btn,
-    .btn.cancel {
-      padding: 10px 20px;
-      font-size: 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      text-decoration: none;
-      margin: 0 10px;
+      margin-top: 24px;
     }
     .btn {
-      background-color: #4CAF50;
+      padding: 10px 18px;
+      background: #4CAF50;
       color: #fff;
-    }
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: background .2s;
+      text-decoration: none;
+      display: inline-block;
+      margin: 0 6px;
     }
     .btn:hover {
-      opacity: 0.9;
+      background: #388e3c;
     }
   </style>
 </head>
@@ -94,7 +107,13 @@
 
 %>
 <div class="message">
-  <h1><%= message %></h1>
+  <% boolean isSuccess = message != null && message.toLowerCase().contains("success"); %>
+  <% if (isSuccess) { %>
+    <span class="status-success">&#10003;</span>
+  <% } else { %>
+    <span class="status-error">&#10007;</span>
+  <% } %>
+  <h1 style="font-size:1.4rem;font-weight:500;margin-bottom:10px;"><%= message %></h1>
   <div class="btn-group">
     <a href="dashboard.jsp" class="btn">Dashboard</a>
   </div>

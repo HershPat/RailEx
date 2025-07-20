@@ -28,7 +28,7 @@
       background:#2c2c2c; padding:0 20px; display:flex;
       justify-content:space-between; align-items:center; height:60px;
       box-shadow:0 2px 4px rgba(0,0,0,0.5);
-      position:fixed; width:calc(100% - 240px); left:240px; top:0; z-index:10;
+      position:fixed; left:240px; right:0; top:0; z-index:10;
     }
     .site-header h1 { margin:0; font-size:2rem; }
     .top-right { display:flex; align-items:center; }

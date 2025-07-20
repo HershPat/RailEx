@@ -12,8 +12,14 @@
   String editId = request.getParameter("editId");
   String deleteId = request.getParameter("deleteId");
   String message = null;
+  String username = (String) session.getAttribute("username");
 
-  // Handle Delete
+  if (request.getParameter("log") != null) {
+    session.invalidate();
+    response.sendRedirect("../login.jsp?logout=true");
+    return;
+  }
+
   if (deleteId != null) {
     try (Connection conn = new ApplicationDB().getConnection();
          PreparedStatement ps = conn.prepareStatement("DELETE FROM TrainSchedule WHERE lineId=?")) {
@@ -23,7 +29,6 @@
     } catch (SQLException e) { message = "Error: " + e.getMessage(); }
   }
 
-  // Handle Edit (POST)
   if ("POST".equalsIgnoreCase(method) && action != null && action.equals("edit")) {
     String lineId = request.getParameter("lineId");
     String lineName = request.getParameter("lineName");
@@ -47,10 +52,9 @@
       ps.executeUpdate();
       message = "Schedule updated.";
     } catch (SQLException e) { message = "Error: " + e.getMessage(); }
-    editId = null; // Hide form after edit
+    editId = null;
   }
 
-  // Fetch stations for dropdowns
   java.util.Map<String, String> stations = new java.util.LinkedHashMap<>();
   try (Connection conn = new ApplicationDB().getConnection();
        PreparedStatement ps = conn.prepareStatement("SELECT stationId, stationName FROM Station ORDER BY stationName")) {
@@ -92,7 +96,7 @@
       transition: background .2s, color .2s;
     }
     .navbar a:hover { background: #333; color: #fff; }
-    .dashboard-container { max-width:1000px; margin:100px auto; padding:20px; margin-left: 240px; margin-top: 80px; }
+    .dashboard-container { max-width:1000px; margin:80px auto; padding:20px; margin-left: 240px; margin-top: 80px; }
     .table-admin { width:100%; border-collapse:collapse; background:#2c2c2c; margin-bottom:30px; }
     .table-admin th, .table-admin td { padding:10px; border:1px solid #444; text-align:left; }
     .table-admin th { background:#333; }
@@ -103,6 +107,44 @@
     .form-control { width:100%; padding:8px; margin-bottom:10px; border:1px solid #444; border-radius:4px; background:#1f1f1f; color:#eee; }
     .cancel { margin-left:10px; color:#bbb; text-decoration:none; }
     .cancel:hover { color:#fff; }
+    .site-header {
+      background: #2c2c2c;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      position: fixed;
+      left: 240px;
+      right: 0;
+      top: 0;
+      z-index: 10;
+    }
+    .site-header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    .top-right {
+      display: flex;
+      align-items: center;
+    }
+    .top-right p {
+      margin: 0 15px 0 0;
+      font-size: 1.2rem;
+    }
+    #logout {
+      background: #e53935;
+      border: none;
+      padding: 8px 16px;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+      transition: background .2s;
+    }
+    #logout:hover {
+      background: #d32f2f;
+    }
   </style>
 </head>
 <body>
@@ -114,6 +156,17 @@
     <a href="stationSchedules.jsp">Schedules by Station</a>
     <a href="lineReservations.jsp">Customers by Line & Date</a>
   </div>
+
+  <header class="site-header">
+    <h1>Edit Train Schedules</h1>
+    <div class="top-right">
+      <p>Welcome, <%= username %></p>
+      <form method="post">
+        <button id="logout" name="log" type="submit">Log Out</button>
+      </form>
+    </div>
+  </header>
+
   <div class="dashboard-container">
     <h1>Edit/Delete Train Schedules</h1>
     <% if (message != null) { %>
@@ -161,7 +214,6 @@
         </td>
       </tr>
       <% if (editId != null && editId.equals(id)) {
-        // Fetch current values for the edit form
         String curLineName = rs.getString("lineName");
         String curTrainId = rs.getString("trainId");
         String curFare = rs.getString("fare");

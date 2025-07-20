@@ -36,6 +36,7 @@
             height: 100vh;
             padding-top: 80px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.7);
+            z-index: 50;
         }
         .navbar h2 {
             color: #4CAF50;
@@ -65,11 +66,49 @@
             font-size: 1.5rem;
             margin: 20px 0 10px;
         }
+        .site-header {
+            background: #1c1c1c;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 240px;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.7);
+            z-index: 200;
+        }
+        .site-header h1 {
+            color: #4CAF50;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .top-right p {
+            margin: 0;
+            color: #bbb;
+        }
+        #logout {
+            background: #e53935;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        #logout:hover {
+            background: #b71c1c;
+        }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="navbar">
+      <div class="navbar">
         <h2>Representative Panel</h2>
         <a href="dashboard.jsp">Dashboard</a>
         <a href="editSchedule.jsp">Edit Train Schedule</a>
@@ -78,9 +117,8 @@
         <a href="lineReservations.jsp">Customers by Line & Date</a>
     </div>
 
-    <!-- Header -->
-    <header class="site-header">
-        <h1>RailEx Representative</h1>
+      <header class="site-header">
+        <h1>RailEx</h1>
         <div class="top-right">
             <p>Welcome, <%=username %></p>
             <form method="post">
@@ -89,8 +127,7 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="dashboard-container">
+      <div class="dashboard-container">
         <div class="section-title">Dashboard</div>
         <p>This is the representative dashboard. Use the sidebar to navigate.</p>
     </div>
